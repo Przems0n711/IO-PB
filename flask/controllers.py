@@ -1,5 +1,11 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class AddUserRequest:
-    pass
+    json: dict
+
 
 class AddUserController:
-    pass
+    def add(self, request: AddUserRequest) -> None:
+        print(request.json)

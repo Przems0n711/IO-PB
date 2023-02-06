@@ -1,7 +1,7 @@
 from factory import DictFactory
 from factory.fuzzy import FuzzyText, FuzzyInteger, FuzzyFloat
 
-from io_lottery.app import add_user, app
+from IO_LOTTERYPB.app import add_user, app
 
 
 class UserPayloadFactory(DictFactory):
