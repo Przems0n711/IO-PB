@@ -21,6 +21,12 @@ api.add_resource(OtherController, '/other')
 def handle_not_implemented_error(e):
     return {"message": "Not Implemented"}, 501
 
+@app.post("/other")
+def add_user() -> Response:
+    othercontroller = AddOtherController
+    othercontroller.add(request=AddUserRequest(json=request.json))
+    return jsonify(request.json)
+
 @app.post("/users")
 def add_user() -> Response:
     controller = AddUserController()
