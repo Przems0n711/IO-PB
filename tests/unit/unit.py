@@ -1,20 +1,21 @@
-from factory import DictFactory
-from factory.fuzzy import FuzzyText, FuzzyInteger, FuzzyFloat
+from pytest import raises
+from pytest import fixture
 
-from IO_LOTTERYPB.app import add_user, app
+from IO_LOTTERYPB.repositories import UserRepository
 
-
-class UserPayloadFactory(DictFactory):
-    name = FuzzyText()
-    last_name = FuzzyText()
-    email = FuzzyText()
-    age = FuzzyInteger(low=0)
-    essays_count = FuzzyInteger(low=0)
-    rating = FuzzyFloat(low=0)
+@fixture
+def user_repository() -> UserRepository:
+    return UserRepository()
 
 
-def test_returns_sent_user() -> None:
-    payload = UserPayloadFactory()
-    with app.test_request_context(path="/users", method='POST', json=payload):
-        actual = add_user()
-    assert actual == payload
+def test_can_instantiate_user_repository(
+    user_repository: UserRepository,
+) -> None:
+    pass
+
+
+def test_raises_on_add_method(
+    user_repository: UserRepository,
+) -> None:
+    with raises(NotImplementedError):
+        user_repository.add()
