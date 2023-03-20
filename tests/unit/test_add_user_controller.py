@@ -1,4 +1,5 @@
 from unittest.mock import Mock
+import unittest
 
 import pytest
 from pytest import fixture
@@ -44,3 +45,23 @@ def test_get_user_controller_raises_on_get() -> None:
     controller = GetUserController()
     with pytest.raises(NotImplementedError):
         controller.get(id=21)
+
+class TestUserController(unittest.TestCase):
+    def setUp(self):
+        self.user_controller = UserController(UserRepository(UserDao()))
+
+    def test_create_user(self):
+        user = {"id": 1, "name": "Marcin Baza"}
+        response = self.user_controller.create_user(user)
+        self.assertEqual(response, user)
+
+    def test_update_user(self):
+        user_id = 1
+        user = {"name": "Krzysiu Baza"}
+        response = self.user_controller.update_user(user_id, user)
+        self.assertEqual(response["name"], user["name"])
+
+    def test_delete_user(self):
+        user_id = 1
+        with self.assertRaises(NotImplementedError):
+            self.user_controller.delete_user(user_id)
