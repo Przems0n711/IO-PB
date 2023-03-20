@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "io-lottery"
+name = "IO_LOTTERYPB"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "Flask app"
+authors = ["Przemyslaw Brzuzy"]
 readme = "README.md"
-packages = [{include = "io_lottery"}]
+packages = [{include = "IO_LOTTERYPB"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
