@@ -32,3 +32,44 @@ def add_user() -> Response:
     controller = AddUserController()
     controller.add(request=AddUserRequest(json=request.json))
     return jsonify(request.json)
+
+@app.route('/users', methods=['GET'])
+def get_users():
+    abort(501)
+
+@app.route('/users', methods=['POST'])
+def add_user():
+    user = request.json
+    users.append(user)
+    return jsonify(user), 201
+
+@app.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    user = next((user for user in users if user['id'] == user_id), None)
+    if not user:
+        abort(404)
+
+    user.update(request.json)
+
+    return jsonify(request.json), 200
+
+@app.route('/users/<int:user_id>', methods=['PATCH'])
+def partial_update_user(user_id):
+    user = next((user for user in users if user['id'] == user_id), None)
+    if not user:
+        abort(404)
+
+    key = list(request.json.keys())[0]
+    user[key] = request.json[key]
+
+    return jsonify(request.json), 200
+
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    user = next((user for user in users if user['id'] == user_id), None)
+    if not user:
+        abort(404)
+
+    users.remove(user)
+
+    return '', 204
