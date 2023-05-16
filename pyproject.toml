@@ -9,6 +9,8 @@ packages = [{include = "IO_LOTTERYPB"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 flask = "^2.2.2"
+sqlalchemy = "^2.0.9"
+psycopg2-binary = "^2.9.6"
 
 
 [tool.poetry.group.dev.dependencies]
