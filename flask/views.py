@@ -1,21 +1,41 @@
-from flask import jsonify, request
+from flask import Flask, jsonify, request, abort
 from flask.views import MethodView
-from flask_classful import FlaskView, route
+from flask_injector import FlaskInjector
+from injector import inject, injectable
+from typing import Tuple
 
-class UserView(FlaskView):
-    def __init__(self):
-        self.users = UserRepository()
+app = Flask(__name__)
 
-    def index(self):
-        abort(501)
 
-    def post(self):
+class UserRepository:
+    def add(self, user: dict) -> None:
+        pass
+
+    def get(self, user_id: int) -> dict:
+        pass
+
+    def delete(self, user: dict) -> None:
+        pass
+
+
+class UserController(MethodView):
+    @inject
+    def __init__(self, user_repository: UserRepository) -> None:
+        self.user_repository = user_repository
+
+    def post(self) -> Tuple[dict, int]:
         user = request.json
-        self.users.add(user)
+        self.user_repository.add(user)
         return jsonify(user), 201
 
-    def put(self, user_id):
-        user = self.users.get(user_id)
+
+class UserUpdateController(MethodView):
+    @inject
+    def __init__(self, user_repository: UserRepository) -> None:
+        self.user_repository = user_repository
+
+    def put(self, user_id: int) -> Tuple[dict, int]:
+        user = self.user_repository.get(user_id)
         if not user:
             abort(404)
 
@@ -23,9 +43,8 @@ class UserView(FlaskView):
 
         return jsonify(request.json), 200
 
-    @route('/<int:user_id>', methods=['PATCH'])
-    def partial_update(self, user_id):
-        user = self.users.get(user_id)
+    def patch(self, user_id: int) -> Tuple[dict, int]:
+        user = self.user_repository.get(user_id)
         if not user:
             abort(404)
 
@@ -34,11 +53,28 @@ class UserView(FlaskView):
 
         return jsonify(request.json), 200
 
-    def delete(self, user_id):
-        user = self.users.get(user_id)
+    def delete(self, user_id: int) -> Tuple[str, int]:
+        user = self.user_repository.get(user_id)
         if not user:
             abort(404)
 
-        self.users.delete(user)
+        self.user_repository.delete(user)
 
         return '', 204
+
+
+app.add_url_rule('/users', view_func=UserController.as_view('user'))
+app.add_url_rule('/users/<int:user_id>', view_func=UserUpdateController.as_view('user_update'))
+
+
+@injectable
+class AppSetup:
+    @inject
+    def __init__(self, user_repository: UserRepository) -> None:
+        self.user_repository = user_repository
+
+    def configure_injector(self, binder) -> None:
+        binder.bind(UserRepository, to=self.user_repository)
+
+
+FlaskInjector(app=app, modules=[AppSetup()])
