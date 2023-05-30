@@ -1,3 +1,4 @@
+# flake8: noqa
 import unittest
 from flask import Flask
 from unittest.mock import MagicMock
